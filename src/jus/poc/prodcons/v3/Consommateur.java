@@ -1,4 +1,4 @@
-package jus.poc.prodcons.v1;
+package jus.poc.prodcons.v3;
 
 import jus.poc.prodcons.Acteur;
 import jus.poc.prodcons.Aleatoire;
@@ -18,6 +18,11 @@ public class Consommateur extends Acteur implements _Consommateur  {
 		this.tampon = tampon;
 		nbMessage = 0;
 	}
+
+	@Override
+	public int nombreDeMessages() {
+		return nbMessage;
+	}
 	
 	public ProdCons tampon(){
 		return tampon;
@@ -25,10 +30,12 @@ public class Consommateur extends Acteur implements _Consommateur  {
 	
 	public void run(){
 		while(tampon.enAttente() >= 0){
-			int tempsDeTraitement = Aleatoire.valeur(50 * this.moyenneTempsDeTraitement(), 50 * this.deviationTempsDeTraitement());
+			int tempsDeTraitement =Aleatoire.valeur(50 * this.moyenneTempsDeTraitement(),50 * this.deviationTempsDeTraitement());
 			try {
 				sleep(tempsDeTraitement);
-				System.out.println("Consommateur : " + identification() + " a lu le message : '" + tampon().get(this).toString() +"' c'est le " + ++nbMessage + "ème message qu'il consomme.");
+				Message m = (Message) tampon().get(this);
+				System.out.println("Consommateur " + identification() + " a lu le message : '" + m.toString() +"' c'est le " + ++nbMessage + "ème message qu'il consomme.");
+				tampon().observateur().consommationMessage(this, m, tempsDeTraitement);
 				
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -39,9 +46,5 @@ public class Consommateur extends Acteur implements _Consommateur  {
 			}
 		}
 	}
-
-	@Override
-	public int nombreDeMessages() {
-		return nbMessage;
-	}
 }
+

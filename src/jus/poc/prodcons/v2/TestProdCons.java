@@ -1,4 +1,4 @@
-package jus.poc.prodcons.v1;
+package jus.poc.prodcons.v2;
 
 import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
@@ -77,11 +77,11 @@ public class TestProdCons extends Simulateur {
 
 	@Override
 	protected void run() {
-		for(int i = 0; i< option.get("nbCons"); i++){
-			C[i].start();
-		}
 		for(int i = 0; i< option.get("nbProd"); i++){
 			P[i].start();
+		}
+		for(int i = 0; i< option.get("nbCons"); i++){
+			C[i].start();
 		}
 	}
 	

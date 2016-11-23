@@ -1,4 +1,4 @@
-package jus.poc.prodcons.v1;
+package jus.poc.prodcons.v2;
 
 import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
@@ -12,10 +12,14 @@ public class ProdCons implements Tampon {
 	private int indexToProd;
 	private int indexToCons;
 	private int nbPlein;
+	private File fCons, fProd;
+	
 
 	public ProdCons(int permits) {
 		taille = permits;
 		tampon = new Message[permits];
+		fProd = new File();
+		fCons = new File();
 		indexToProd = 0;
 		indexToCons = 0;
 		nbPlein = 0;
@@ -28,22 +32,22 @@ public class ProdCons implements Tampon {
 	}
 
 	@Override
-	public synchronized Message get(_Consommateur arg0) throws Exception, InterruptedException {
-		while (enAttente() == 0) wait();
+	public Message get(_Consommateur arg0) throws Exception, InterruptedException {
+		while (enAttente() == 0) fProd.attendre();
 		Message message = tampon[indexToCons];
 		nbPlein--;
 		indexToCons = (indexToCons+1)%(taille);
-		notifyAll();
+		fCons.reveiller();
 		return message;
 	}
 
 	@Override
-	public synchronized void put(_Producteur arg0, Message arg1) throws Exception, InterruptedException {
-		while (enAttente() >= taille) wait();
+	public void put(_Producteur arg0, Message arg1) throws Exception, InterruptedException {
+		while (enAttente() == taille) fCons.attendre();
 		tampon[indexToProd] = arg1;
 		nbPlein++;
 		indexToProd = (indexToProd+1)%(taille);
-		notifyAll();
+		fProd.reveiller();
 	}
 
 	@Override
