@@ -1,25 +1,20 @@
 package jus.poc.prodcons.v4;
 
+import jus.poc.prodcons.Message;
+
 public class MessageX implements jus.poc.prodcons.Message{
 	
 	private String message;
-	private int nbExemplaire;
 	
-	public MessageX(String s, int nbExemplaire){
+	public MessageX(Message arg1, String s){
+		this.message = arg1.toString() + s;
+	}
+	
+	public MessageX(String s){
 		message = s;
-		this.nbExemplaire = nbExemplaire;
 	}
 	
 	public String toString(){
 		return message;
 	}
-	
-	public int nbExemplaire(){
-		return nbExemplaire;
-	}
-	
-	public void traite(){
-		nbExemplaire--;
-	}
 }
-

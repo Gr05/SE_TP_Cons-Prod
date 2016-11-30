@@ -11,12 +11,14 @@ import java.util.Map;
 import jus.poc.prodcons.ControlException;
 import jus.poc.prodcons.Observateur;
 import jus.poc.prodcons.Simulateur;
+import jus.poc.prodcons.Tampon;
 
 public class TestProdCons extends Simulateur {
 	
 	private Consommateur[] C;
 	private Producteur[] P;
 	protected HashMap<String, Integer> option;
+	private ProdCons tampon;
 
 	public TestProdCons(Observateur observateur){
 		super(observateur);
@@ -24,17 +26,16 @@ public class TestProdCons extends Simulateur {
 		init("src/jus/poc/prodcons/options/option.xml");
 		try {
 			observateur.init(option.get("nbProd"), option.get("nbCons"), option.get("nbBuffer"));
-		} catch (Exception e1) {
-			System.out.println("Problème avec observateur.init");
+		} catch (ControlException e1) {
+			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		ProdCons tampon = new ProdCons(option.get("nbBuffer"), observateur);
+		this.tampon = new ProdCons(option.get("nbBuffer"), observateur);
 		C = new Consommateur[option.get("nbCons")];
 		P = new Producteur[option.get("nbProd")];
 		for(int i = 0; i< option.get("nbCons"); i++){
 			try {
 				C[i] = new Consommateur(observateur, option.get("tempsMoyenConsommation"), option.get("deviationTempsMoyenConsommation"), tampon);
-				observateur.newConsommateur(C[i]);
 			} catch (ControlException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -46,7 +47,6 @@ public class TestProdCons extends Simulateur {
 						option.get("nombreMoyenDeProduction"), option.get("deviationNombreMoyenDeProduction"),
 						option.get("nombreMoyenNbExemplaire"), option.get("deviationNombreMoyenNbExemplaire"),
 						tampon);
-				observateur.newProducteur(P[i]);
 			} catch (ControlException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -93,6 +93,19 @@ public class TestProdCons extends Simulateur {
 		}
 		for(int i = 0; i< option.get("nbCons"); i++){
 			C[i].start();
+		}
+		while(Thread.activeCount() > option.get("nbCons") + 1 || tampon.enAttente() != 0){
+			try {
+				Thread.sleep(100);
+				//System.out.println("nb message dans tampon =  " + tampon.enAttente());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Terminaison du programme, interruption des processus de consommation");
+		for(int i = 0; i< option.get("nbCons"); i++){
+			C[i].interrupt();
 		}
 	}
 	

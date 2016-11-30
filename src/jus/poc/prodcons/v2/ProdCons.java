@@ -4,50 +4,52 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
+import jus.poc.prodcons.v3.MessageX;
 
 public class ProdCons implements Tampon {
 	
-	private Message[] tampon;
-	private int taille;
-	private int indexToProd;
-	private int indexToCons;
-	private int nbPlein;
-	private File fCons, fProd;
+	private MessageX[] tampon;
+	private int taille, in, out;
+	private MySemaphore mutexIn, mutexOut, prod, cons;
 	
 
 	public ProdCons(int permits) {
 		taille = permits;
-		tampon = new Message[permits];
-		fProd = new File();
-		fCons = new File();
-		indexToProd = 0;
-		indexToCons = 0;
-		nbPlein = 0;
+		tampon = new MessageX[permits];
+		mutexIn = new MySemaphore(1);
+		mutexOut = new MySemaphore(1);
+		prod = new MySemaphore(taille);
+		cons = new MySemaphore(0);
+		in = 0;
+		out = 0;
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public int enAttente() {
-		return nbPlein;
+		return ((in - out)+taille) %taille;
 	}
 
-	@Override
-	public Message get(_Consommateur arg0) throws Exception, InterruptedException {
-		while (enAttente() == 0) fProd.attendre();
-		Message message = tampon[indexToCons];
-		nbPlein--;
-		indexToCons = (indexToCons+1)%(taille);
-		fCons.reveiller();
+	public MessageX get(_Consommateur arg0) throws Exception, InterruptedException {
+		cons.p();
+		mutexOut.p();
+		MessageX message = tampon[out];
+		System.out.println("Conso " + arg0.identification() + " --> retrait du message '" + message + "' à t = " + System.currentTimeMillis());
+		out = (out+1)%(taille);
+		mutexOut.v();
+		prod.v();
 		return message;
 	}
 
 	@Override
 	public void put(_Producteur arg0, Message arg1) throws Exception, InterruptedException {
-		while (enAttente() == taille) fCons.attendre();
-		tampon[indexToProd] = arg1;
-		nbPlein++;
-		indexToProd = (indexToProd+1)%(taille);
-		fProd.reveiller();
+		prod.p();
+		mutexIn.p();
+		System.out.println("Prod " + arg0.identification() + " --> depot du message : " + arg1 + " à t = " + System.currentTimeMillis());
+		tampon[in] = (MessageX) arg1;
+		in = (in+1)%(taille);
+		mutexIn.v();
+		cons.v();
 	}
 
 	@Override

@@ -1,10 +1,10 @@
 package jus.poc.prodcons.v1;
 
-public class Message implements jus.poc.prodcons.Message{
+public class MessageX implements jus.poc.prodcons.Message{
 	
 	private String message;
 	
-	public Message(String s){
+	public MessageX(String s){
 		message = s;
 	}
 	

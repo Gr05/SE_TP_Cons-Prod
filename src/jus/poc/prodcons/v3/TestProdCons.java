@@ -17,15 +17,17 @@ public class TestProdCons extends Simulateur {
 	private Consommateur[] C;
 	private Producteur[] P;
 	protected HashMap<String, Integer> option;
+	MyObservateur observator;
 
 	public TestProdCons(Observateur observateur){
 		super(observateur);
+		observator = new MyObservateur();
 		option = new HashMap<String, Integer>();
 		init("src/jus/poc/prodcons/options/option.xml");
 		try {
 			observateur.init(option.get("nbProd"), option.get("nbCons"), option.get("nbBuffer"));
-		} catch (Exception e1) {
-			System.out.println("Problème avec observateur.init");
+		} catch (ControlException e1) {
+			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		ProdCons tampon = new ProdCons(option.get("nbBuffer"), observateur);
@@ -33,8 +35,7 @@ public class TestProdCons extends Simulateur {
 		P = new Producteur[option.get("nbProd")];
 		for(int i = 0; i< option.get("nbCons"); i++){
 			try {
-				C[i] = new Consommateur(observateur, option.get("tempsMoyenConsommation"), option.get("deviationTempsMoyenConsommation"), tampon);
-				observateur.newConsommateur(C[i]);
+				C[i] = new Consommateur(observateur, observator, option.get("tempsMoyenConsommation"), option.get("deviationTempsMoyenConsommation"), tampon);
 			} catch (ControlException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -42,8 +43,7 @@ public class TestProdCons extends Simulateur {
 		}
 		for(int i = 0; i< option.get("nbProd"); i++){
 			try {
-				P[i] = new Producteur(observateur, option.get("tempsMoyenProduction"), option.get("deviationTempsMoyenProduction"), option.get("nombreMoyenDeProduction"), option.get("deviationNombreMoyenDeProduction") , tampon);
-				observateur.newProducteur(P[i]);
+				P[i] = new Producteur(observateur, observator,  option.get("tempsMoyenProduction"), option.get("deviationTempsMoyenProduction"), option.get("nombreMoyenDeProduction"), option.get("deviationNombreMoyenDeProduction") , tampon);
 			} catch (ControlException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -90,6 +90,18 @@ public class TestProdCons extends Simulateur {
 		}
 		for(int i = 0; i< option.get("nbCons"); i++){
 			C[i].start();
+		}
+		while(!observator.done()){
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		System.out.println("Terminaison du programme, interruption des processus de consommation");
+		for(int i = 0; i< option.get("nbCons"); i++){
+			C[i].interrupt();
 		}
 	}
 	

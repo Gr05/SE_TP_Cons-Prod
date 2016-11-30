@@ -12,11 +12,12 @@ public class Producteur extends Acteur implements _Producteur {
 	private ProdCons tampon;
 	private int nbMessage;
 	
-	protected Producteur(Observateur observateur, int tempsMoyenProduction, int deviationTempsProduction, int nombreMoyenDeProduction, int deviationNombreMoyenDeProduction, ProdCons tampon) throws ControlException {
+	protected Producteur(Observateur observateur, MyObservateur observator, int tempsMoyenProduction, int deviationTempsProduction, int nombreMoyenDeProduction, int deviationNombreMoyenDeProduction, ProdCons tampon) throws ControlException {
 		//la première modif est ici, on utilise la doc d'Acteur et on utilise le static typeProducteur dans le constructeur d'Acteur.
 		super(typeProducteur, observateur, tempsMoyenProduction, deviationTempsProduction);
 		this.tampon = tampon;
 		nbMessage = Aleatoire.valeur(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
+		observator.ajouterMessage(nbMessage);
 	}
 
 	@Override
@@ -36,8 +37,7 @@ public class Producteur extends Acteur implements _Producteur {
 				tampon().put(this, new Message("Producteur " + identification() + " message numéro " +  i));
 				System.out.println("Producteur " + identification() + " dépose le message numéro " +  i + " avec le délais: " + tempsDeTraitement);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				 // Sortie de la boucle infini dans le cas d'une interruption levé
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

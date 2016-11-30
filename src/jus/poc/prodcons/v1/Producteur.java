@@ -12,11 +12,12 @@ public class Producteur extends Acteur implements _Producteur {
 	private ProdCons tampon;
 	private int nbMessage;
 	
-	protected Producteur(Observateur observateur, int tempsMoyenProduction, int deviationTempsProduction, int nombreMoyenDeProduction, int deviationNombreMoyenDeProduction, ProdCons tampon) throws ControlException {
+	protected Producteur(Observateur observateur, MyObservateur observator, int tempsMoyenProduction, int deviationTempsProduction, int nombreMoyenDeProduction, int deviationNombreMoyenDeProduction, ProdCons tampon) throws ControlException {
 		//la première modif est ici, on utilise la doc d'Acteur et on utilise le static typeProducteur dans le constructeur d'Acteur.
 		super(typeProducteur, observateur, tempsMoyenProduction, deviationTempsProduction);
 		this.tampon = tampon;
 		nbMessage = Aleatoire.valeur(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
+		observator.ajouterMessage(nbMessage);
 	}
 
 	@Override
@@ -31,10 +32,10 @@ public class Producteur extends Acteur implements _Producteur {
 	public void run(){
 		for(int i = 1; i <= nombreDeMessages(); i++){
 			int tempsDeTraitement = Aleatoire.valeur(50 * this.moyenneTempsDeTraitement(), 50 * this.deviationTempsDeTraitement());
+			MessageX m = new MessageX("Producteur " + identification() + " message numéro " +  i);
 			try {
 				sleep(tempsDeTraitement);
-				tampon().put(this, new Message("Producteur " + identification() + " message numéro " +  i));
-				System.out.println("Producteur " + identification() + " dépose le message numéro " +  i + " avec le délais: " + tempsDeTraitement);
+				tampon().put(this, m);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -45,3 +46,4 @@ public class Producteur extends Acteur implements _Producteur {
 		}
 	}
 }
+
