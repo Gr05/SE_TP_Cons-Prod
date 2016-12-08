@@ -87,7 +87,7 @@ public class TestProdCons extends Simulateur {
 		}
 		while(!observator.done()){
 			try {
-				Thread.sleep(100);
+				Thread.sleep(10000);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

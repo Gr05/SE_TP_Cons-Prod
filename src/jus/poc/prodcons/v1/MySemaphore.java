@@ -13,8 +13,9 @@ public class MySemaphore {
 			try {
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Thread.currentThread().interrupt();
+				notify();
+				//e.printStackTrace();
 			}
 		}
 	}

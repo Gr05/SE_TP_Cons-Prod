@@ -31,9 +31,10 @@ public class Consommateur extends Acteur implements _Consommateur  {
 			int tempsDeTraitement = Aleatoire.valeur(50 * this.moyenneTempsDeTraitement(), 50 * this.deviationTempsDeTraitement());
 			try {
 				sleep(tempsDeTraitement);
-				System.out.println("Consommateur " + identification() + " a lu le message : '" + tampon().get(this).toString() +"' c'est le " + ++nbMessage + "ème message qu'il consomme.");
-				observator.messageLu();
-				//System.out.println(" il reste "  + observator.bilan());
+			MessageX m = tampon.get(this);
+				if (m != null){
+					observator.messageLu();
+				}
 			} catch (InterruptedException e) {
 				interrupt();
 				break;

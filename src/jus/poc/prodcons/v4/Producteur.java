@@ -13,8 +13,9 @@ public class Producteur extends Acteur implements _Producteur {
 		private ProdCons tampon;
 		private int nbMessage;
 		private int nbExemplaire;
+		private MyObservateur observator;
 		
-		protected Producteur(Observateur observateur, int tempsMoyenProduction, int deviationTempsProduction,
+		public Producteur(Observateur observateur, MyObservateur observator, int tempsMoyenProduction, int deviationTempsProduction,
 				int nombreMoyenDeProduction, int deviationNombreMoyenDeProduction,
 				int nombreMoyenNbExemplaire, int deviationNombreMoyenNbExemplaire,
 				ProdCons tampon) throws ControlException {
@@ -24,6 +25,7 @@ public class Producteur extends Acteur implements _Producteur {
 			this.tampon = tampon;
 			nbMessage = Aleatoire.valeur(nombreMoyenDeProduction, deviationNombreMoyenDeProduction);
 			nbExemplaire = Aleatoire.valeur(nombreMoyenNbExemplaire, deviationNombreMoyenNbExemplaire);
+			this.observator = observator;
 			
 		}
 
@@ -53,5 +55,6 @@ public class Producteur extends Acteur implements _Producteur {
 				e.printStackTrace();
 			}
 		}
+		observator.prodFini();
 	}
 }

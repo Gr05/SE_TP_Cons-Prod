@@ -32,8 +32,9 @@ public class Consommateur extends Acteur implements _Consommateur  {
 			try {
 				sleep(tempsDeTraitement);
 				MessageX m = tampon().get(this);
-				observator.messageLu();
-				//System.out.println(" il reste "  + observator.bilan());
+				if (m != null){
+					observator.messageLu();
+				}
 			} catch (InterruptedException e) {
 				interrupt();
 				break;

@@ -12,9 +12,10 @@ public class ProdCons implements Tampon {
 	private int taille, in, out;
 	private MySemaphore mutexIn, mutexOut, prod, cons;
 	private Observateur observateur;
+	private MyObservateur observator;
 	
 
-	public ProdCons(int permits, Observateur observateur) {
+	public ProdCons(int permits, Observateur observateur, MyObservateur obervator) {
 		taille = permits;
 		tampon = new MessageX[permits];
 		mutexIn = new MySemaphore(1);
@@ -24,6 +25,7 @@ public class ProdCons implements Tampon {
 		in = 0;
 		out = 0;
 		this.observateur = observateur;
+		this.observator = observator;
 	}
 
 	@Override
@@ -36,8 +38,11 @@ public class ProdCons implements Tampon {
 		cons.p();
 		mutexOut.p();
 		MessageX message = tampon[out];
-		observateur.retraitMessage(arg0, message);
-		System.out.println("Conso " + arg0.identification() + " --> retrait du message '" + message + "' à t = " + System.currentTimeMillis());
+		tampon[out] = null;
+		if (message != null){
+			observateur.retraitMessage(arg0, message);
+			System.out.println("Conso " + arg0.identification() + " --> retrait du message '" + message + "' à t = " + System.currentTimeMillis());
+		}
 		out = (out+1)%(taille);
 		mutexOut.v();
 		prod.v();

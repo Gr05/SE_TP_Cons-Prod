@@ -4,7 +4,6 @@ import jus.poc.prodcons.Message;
 import jus.poc.prodcons.Tampon;
 import jus.poc.prodcons._Consommateur;
 import jus.poc.prodcons._Producteur;
-import jus.poc.prodcons.v3.MessageX;
 
 public class ProdCons implements Tampon {
 	
@@ -34,7 +33,10 @@ public class ProdCons implements Tampon {
 		cons.p();
 		mutexOut.p();
 		MessageX message = tampon[out];
-		System.out.println("Conso " + arg0.identification() + " --> retrait du message '" + message + "' à t = " + System.currentTimeMillis());
+		tampon[out] = null;
+		if (message != null){
+			System.out.println("Conso " + arg0.identification() + " --> retrait du message '" + message + "' à t = " + System.currentTimeMillis());
+		}
 		out = (out+1)%(taille);
 		mutexOut.v();
 		prod.v();

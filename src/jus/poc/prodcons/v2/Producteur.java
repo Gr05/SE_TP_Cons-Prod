@@ -34,7 +34,7 @@ public class Producteur extends Acteur implements _Producteur {
 			int tempsDeTraitement = Aleatoire.valeur(50 * this.moyenneTempsDeTraitement(), 50 * this.deviationTempsDeTraitement());
 			try {
 				sleep(tempsDeTraitement);
-				tampon().put(this, new Message("Producteur " + identification() + " message numéro " +  i));
+				tampon().put(this, new MessageX("Producteur " + identification() + " message numéro " +  i));
 				System.out.println("Producteur " + identification() + " dépose le message numéro " +  i + " avec le délais: " + tempsDeTraitement);
 			} catch (InterruptedException e) {
 				 // Sortie de la boucle infini dans le cas d'une interruption levé

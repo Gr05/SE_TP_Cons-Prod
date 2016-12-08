@@ -19,6 +19,7 @@ public class TestProdCons extends Simulateur {
 	private Producteur[] P;
 	protected HashMap<String, Integer> option;
 	private ProdCons tampon;
+	private MyObservateur observator;
 
 	public TestProdCons(Observateur observateur){
 		super(observateur);
@@ -30,6 +31,7 @@ public class TestProdCons extends Simulateur {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		observator = new MyObservateur(option.get("nbProd"));
 		this.tampon = new ProdCons(option.get("nbBuffer"), observateur);
 		C = new Consommateur[option.get("nbCons")];
 		P = new Producteur[option.get("nbProd")];
@@ -43,7 +45,7 @@ public class TestProdCons extends Simulateur {
 		}
 		for(int i = 0; i< option.get("nbProd"); i++){
 			try {
-				P[i] = new Producteur(observateur, option.get("tempsMoyenProduction"), option.get("deviationTempsMoyenProduction"),
+				P[i] = new Producteur(observateur, observator, option.get("tempsMoyenProduction"), option.get("deviationTempsMoyenProduction"),
 						option.get("nombreMoyenDeProduction"), option.get("deviationNombreMoyenDeProduction"),
 						option.get("nombreMoyenNbExemplaire"), option.get("deviationNombreMoyenNbExemplaire"),
 						tampon);
@@ -94,9 +96,9 @@ public class TestProdCons extends Simulateur {
 		for(int i = 0; i< option.get("nbCons"); i++){
 			C[i].start();
 		}
-		while(Thread.activeCount() > option.get("nbCons") + 1 || tampon.enAttente() != 0){
+		while(!observator.done() || tampon.enAttente() != 0){
 			try {
-				Thread.sleep(100);
+				Thread.sleep(1000);
 				//System.out.println("nb message dans tampon =  " + tampon.enAttente());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

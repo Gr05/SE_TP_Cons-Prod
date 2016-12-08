@@ -30,7 +30,7 @@ public class TestProdCons extends Simulateur {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		ProdCons tampon = new ProdCons(option.get("nbBuffer"), observateur);
+		ProdCons tampon = new ProdCons(option.get("nbBuffer"), observateur, observator);
 		C = new Consommateur[option.get("nbCons")];
 		P = new Producteur[option.get("nbProd")];
 		for(int i = 0; i< option.get("nbCons"); i++){
